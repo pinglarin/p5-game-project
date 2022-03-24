@@ -1,31 +1,73 @@
-//Sprite creation
-//Click to create a new sprite with random speed
-// import "../p5.play.js";
+var speed;
+const Move = true;
+var isDash = false;
+let x, y;
+
 
 function setup() {
-  createCanvas(800, 400);
+  createCanvas(600, 600);
+  noStroke();//borderless
+  x = width / 2;  //player start position
+  y = height / 2; //player start position
+  speed = createVector(10,10);
+  frameRate(60);
 }
 
 function draw() {
-  background(255, 255, 255);
+  background(16, 55, 84); 
+  fill(51, 171, 177);
+  ellipse(x, y, 50, 50); // x pos, y pos , size x , size y
+  
 
-  fill(0);
-  textAlign(CENTER);
-  text('Click to create a new sprite', width/2, height/2);
-  //draw all the sprites added to the sketch so far
-  //the positions will be updated automatically at every cycle
-  drawSprites();
+  if(Move)
+  {
+    if (keyIsDown(87)) //w
+    {
+      y -= speed.y;
+    }
+    else if (keyIsDown(65))//a
+    {
+      x -= speed.x;
+    } else if (keyIsDown(83))//s
+    {
+      y += speed.y;
+    } else if (keyIsDown(68))//d
+    {
+      x += speed.x;
+    }    
+  }
+
+  if( x > width - 25)
+  {
+    x = width - 25;
+  }
+  if( x <= 25 )
+  {
+    x = 25;
+  }  
+  if( y > height- 25)
+  {
+    y = height - 25;
+  }
+  if( y <= 25 )
+  {
+    y = 25;
+  }  
 }
 
-function mousePressed() {
-
-  //create a sprite at the mouse position and store it in a temporary variable
-  var s = createSprite(mouseX, mouseY, 30, 30);
-  //if no image or animation is associated it will be a rectancle of the specified size
-  //and a random color
-
-  //now you can use the variable to set properties
-  //e.g. a random velocity on the x and y coordinates
-  s.velocity.x = random(-5, 5);
-  s.velocity.y = random(-5, 5);
+function keyPressed()
+{  
+  if(keyIsDown(32) && isDash == false)
+  {
+    speed.set(20,20);
+    isDash = true;
+    print("Is Dash")
+  }  
+  else if (!keyIsDown(32) && isDash == true)
+  {
+    speed.set(10,10);
+    isDash = false;
+    
+  }
+ 
 }
