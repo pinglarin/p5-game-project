@@ -1,7 +1,7 @@
 // Thank you Unlucky Studio for free sprites!
 // https://opengameart.org/content/complete-spaceship-game-art-pack
 
-let coins;
+let coins, pills;
 let player;
 let score = 0;
 let HP = 1;
@@ -23,7 +23,7 @@ function preload() {
                               "graphics/ship/7.png",
                               "graphics/ship/8.png");
   enemy_anim = loadAnimation("graphics/aestroid_dark.png");
-
+  pill_anim = loadAnimation("graphics/pills/1.png", "graphics/pills/2.png", "graphics/pills/3.png",);
                       
   
 }
@@ -65,12 +65,26 @@ function draw() {
     enemyBehavior();
   }
 
-  if (startCoin - score <= 1) {
+  // second phase 
+  if (startCoin - score <= 1) { //
     let c = createSprite(
       random(100, width-100),
       random(100, height-100),10, 10);
+
     c.addAnimation("default", coin_anim);
-    coins.add(c);  
+    coins.add(c); 
+
+    // let a = random(0, 100);
+    // if (a < 10) {
+    //   c.addAnimation("default", pill_anim);
+    //   pills.add(c);
+      
+    // }
+    // else {
+    //   c.addAnimation("default", coin_anim);
+    //   coins.add(c);  
+    // }
+    
     startCoin += 1;
   }
   
@@ -94,6 +108,7 @@ function draw() {
   }  
   
   player.overlap(coins, getCoin);
+  // player.overlap(pills, getPill);
   player.overlap(enemy, hurt);
   drawSprites();
   fill(255);
@@ -118,6 +133,12 @@ function getCoin(player, coin) {
   coin.remove();
   score += 1;
 }
+
+// function getPill(player, pill) {
+//   pill.remove();
+//   HP += 1;
+//   score +=1;
+// }
 
 function hurt(player, enemy) {
   HP -= 1;
