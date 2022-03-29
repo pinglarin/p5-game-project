@@ -1,114 +1,98 @@
-var speed;
-const Move = true;
-var isDash = false;
-var DashDir = 0;
-let x, y;
-var song;
-
+let coins;
 let player;
-// function preload()
-// {
-//   song = loadSound('Cytus R - VitMaster - Sakuzyo.m4a');
-// }
-
-
+let score = 0;
+let HP = 1;
+let isDash = false;
+let bg;
 function setup() {
+  bg = loadImage('BackgroundSprites.jpg');
   createCanvas(600, 600);
-  //song = loadSound("Cytus R - VitMaster - Sakuzyo.m4a");
-  //song.play();
-  noStroke();//borderless  
-  x = width / 2;  //player start position
-  y = height / 2; //player start position
-  speed = createVector(10,10);
-  frameRate(60);
+  coins = new Group();
+  for (let i = 0; i < 10; i++) {
+    let c = createSprite(
+      random(100, width-100),
+      random(100, height-100),10, 10);
+    c.shapeColor = color(0, 255, 0);
+    coins.add(c);    
+  }
 
+  //Player Config
+  player = createSprite(50, 50, 20, 20);
+  player.shapeColor = color(72,221,255);
+
+  speed = createVector(5,5);
 
 }
-
 function draw() {
-  background(16, 55, 84); 
-  if(!isDash)
-  {
-    fill(51, 171, 177);
-    ellipse(x, y, 50, 50); // player size x pos, y pos , size x , size y
-  }
-  else if(isDash && DashDir == 1)
-  {
-    fill(255, 0, 0);
-    ellipse(x, y, 25, 50); // player size x pos, y pos , size x , size y     
-  }  
-  else if(isDash && DashDir == 2)
-  {
-    fill(255, 0, 0);    
-     ellipse(x, y, 50, 25); // player size x pos, y pos , size x , size y
-  }    
- 
-  //Control System
+  background(bg);
+
+  //Control by Mouse
+  // player.velocity.x =   (mouseX-player.position.x)*0.1;
+  // player.velocity.y =   (mouseY-player.position.y)*0.1;
+
+  //Control by Keybord
   if (keyIsDown(87)) //w
   {
-    y -= speed.y;
+    player.position.y -= speed.y;
   }
   else if (keyIsDown(65))//a
   {
-    x -= speed.x;
+    player.position.x -= speed.x;
   } 
   else if (keyIsDown(83))//s
   {
-    y += speed.y;
+    player.position.y += speed.y;
   }   
   else if (keyIsDown(68))//d
   {
-    x += speed.x;
-  }    
- 
-  //Wall on mapsize
-  if( x > width - 25)
-  {
-    x = width - 25;
-  }
-  if( x <= 25 )
-  {
-    x = 25;
+    player.position.x += speed.x;
   }  
-  if( y > height- 25)
+  
+  if(keyIsDown(32) && isDash == false)//Spacebar
   {
-    y = height - 25;
+    speed.set(15,15);
+    isDash = true;
   }
-  if( y <= 25 )
+  if(!keyIsDown(32))
   {
-    y = 25;
+    speed.set(5,5);
+    isDash = false;
   }  
-}
 
-function keyPressed()
-{   
-  if(keyIsDown(32) && (keyIsDown(87) || keyIsDown(83)) && isDash == false)
-  {  
-   
-    speed.set(20,20);
-    isDash = true;
-    print("Is Dash |");
-    print(DashDir);
-   
-      DashDir = 1; //Horizon
-    
- 
-  } 
-  if(keyIsDown(32) && (keyIsDown(65) || keyIsDown(68)) && isDash == false)
-  {    
-    speed.set(20,20);
-    isDash = true;
-    print("Is Dash - ");
-    print(DashDir);
-    
-      DashDir = 2; //Vertical
-    
-  } 
-  if (!keyIsDown(32) && isDash == true)
+  //Wall on mapsize
+  if( player.position.x > width - 10)
   {
-    speed.set(10,10);
-    isDash = false; 
-    DashDir = 0;  
+    player.position.x = width-10;
   }
- 
+  if( player.position.x <= 10 )
+  {
+    player.position.x = 10;
+  }  
+  if( player.position.y > height-10)
+  {
+    player.position.y = height-10;
+  }
+  if( player.position.y <= 10)
+  {
+    player.position.y = 10;
+  }  
+  
+  player.overlap(coins, getCoin);
+  drawSprites();
+  fill(255);
+  noStroke();
+  textSize(20);
+  textAlign(CENTER, CENTER);
+
+  if (HP >= 0) {
+    text("Score: " + score, 50, 570);
+  }
+  if (HP <= 0){
+    textSize(75);
+    text("Game over", width/2, height/2);
+  }
+}
+function getCoin(player, coin) {
+  coin.remove();
+  score += 1;
 }
